@@ -1,11 +1,27 @@
-import React from 'react';
-import { View, SafeAreaView, FlatList, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, SafeAreaView, FlatList } from 'react-native';
 import FocusedStatusBar from '../components/FocusedStatusBar';
 import NFTCard from '../components/NFTCard';
 import HomeHeader from '../components/HomeHeader';
 import { COLORS, NFTData } from '../constants';
 
 const Home = () => {
+  const [nftData, setNftData] = useState(NFTData);
+
+  const handleSearch = (value) => {
+    if (!value?.length) setNftData(NFTData);
+
+    const filteredData = NFTData?.filter((item) =>
+      item.name.toLowerCase().includes(value?.toLowerCase())
+    );
+
+    if (filteredData?.length > 0) {
+      setNftData(filteredData);
+    } else {
+      setNftData(NFTData);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FocusedStatusBar backgroundColor={COLORS.primary} />
@@ -14,11 +30,11 @@ const Home = () => {
         {/*  for making parallax effect */}
         <View style={{ zIndex: 0 }}>
           <FlatList
-            data={NFTData}
+            data={nftData}
             renderItem={({ item }) => <NFTCard data={item} />}
             keyExtractor={(item) => item?.id}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={<HomeHeader />}
+            ListHeaderComponent={<HomeHeader onSearch={handleSearch} />}
           />
         </View>
       </View>
